@@ -1,22 +1,18 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const {token} = require('./config.json');
+const { prefix, token} = require('./config.json');
 const config = require('./config.json')
 const punchsaint = require('./commands/punchsaint.js');
 const { log } = require('console');
 var Punch = 'off';
-const Keyv = require('keyv');
-const keyv = new Keyv('sqlite://path/to/database.sqlite');
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 const cooldowns = new Discord.Collection();
-const globalPrefix = '$';
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
     client.commands.set(command.name, command);
 }
-keyv.on('error', err => console.error('Keyv connection error:', err));
 
 client.once('ready', () => {
 
@@ -26,40 +22,9 @@ client.once('ready', () => {
 
 });
 
-client.on('message', async message => {
-	if (message.author.bot) return;
-let args;
-	if (message.guild) {
-		let prefix;
 
-		if (message.content.startsWith(globalPrefix)) {
-			prefix = globalPrefix;
-		} else {
-			// check the guild-level prefix
-			const guildPrefix = await prefixes.get(message.guild.id);
-			if (message.content.startsWith(guildPrefix)) prefix = guildPrefix;
-    }
-    if (!prefix) return;
-		args = message.content.slice(prefix.length).trim().split(/\s+/);
-	} else {
-		// handle DMs
-		const slice = message.content.startsWith(globalPrefix) ? globalPrefix.length : 0;
-		args = message.content.slice(slice).split(/\s+/);
-  }
-  const command = args.shift().toLowerCase();
-});
+client.on('message', message => {
 
-
-client.on('message', async message => {
-
-if (command === 'prefix') {
-	if (args.length) {
-		await prefixes.set(message.guild.id, args[0]);
-		return message.channel.send(`Successfully set prefix to \`${args[0]}\``);
-	}
-
-	return message.channel.send(`Prefix is \`${await prefixes.get(message.guild.id) || globalPrefix}\``);
-}
     if(message.content.includes('egg')){
         message.react('🥚');
       }
